@@ -57,7 +57,7 @@ npm run start:dev
 yarn start:dev
 
 
-A API estará disponível em `https://ilotto-teste.onrender.com/api`
+A API estará disponível em `localhost:3000`
 
 ## 3. Endpoints
 
@@ -89,3 +89,7 @@ docker-compose up --build
 
 
 Isso irá iniciar uma fila dentro do container.
+
+## 6. Você pode verificar a API rodando
+
+A API estará disponível em `https://ilotto-teste.onrender.com/api`
