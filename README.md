@@ -11,4 +11,3 @@
 - Rode o comando 'npm install ou yarn'
 - Rode o comando 'npx prisma migrate dev --name init' para criar uma migration
 - Depois rode o camondo 'npx prisma db pull' para subir tabelas para o seu banco
-- Arquivo de seeds para popular o banco de dados [Configurar variáveis de ambiente](./.env)

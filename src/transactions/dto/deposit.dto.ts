@@ -2,9 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsInt, IsNotEmpty, IsNumber, Min } from "class-validator";
 
 export class DepositDto {
-    @IsInt()
-    @IsNotEmpty({ message: 'Conta é obrigatório' })
-    @ApiProperty()
     senderId: number;
 
     @IsNumber()

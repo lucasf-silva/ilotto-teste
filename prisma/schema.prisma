@@ -27,6 +27,8 @@ model Transactions {
   recipientUserId Int?
   amount          Float
   timestamp       DateTime @default(now())
+  error           String?
+  status          String?
   recipientUser   Users?   @relation("Recipient", fields: [recipientUserId], references: [id])
   senderUser      Users    @relation("Sender", fields: [senderUserId], references: [id])
 }

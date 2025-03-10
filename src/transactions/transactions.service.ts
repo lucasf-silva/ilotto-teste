@@ -1,62 +1,57 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { DepositDto } from './dto/deposit.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { transactionQueue } from 'src/fila/transactions/transaction.queue';
+import { QueueEvents } from 'bullmq';
+import { TransferDto } from './dto/transfer.dto';
 
 @Injectable()
 export class TransactionsService {
-    constructor(private prisma: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        private readonly queueEvents: QueueEvents
+    ) { }
 
     async deposit(data: DepositDto) {
-        const user = await this.prisma.users.findFirst({ where: { id: data.senderId } });
-
-        if (!user) {
-            throw new BadRequestException('Conta do usuário não encontrado');
-        }
-
-        const updatedUser = await this.prisma.users.update({
-            where: { id: data.senderId },
-            data: {
-                balance: user.balance + data.amount
-            }
+        await transactionQueue.add('processTransaction', {
+            type: 'deposit',
+            amount: data.amount,
+            userId: data.senderId
         });
 
-        await this.prisma.transactions.create({
-            data: {
-                type: 'deposit',
-                senderUserId: user.id,
-                amount: data.amount,
-              },
-        });
-
-        return "Depósito realizado com sucesso"
+        return "Depósito será realizado em breve!"
     }
 
     async withdraw(data: DepositDto) {
-        const user = await this.prisma.users.findFirst({ where: { id: data.senderId } });
+        await transactionQueue.add('processTransaction', {
+            type: 'withdraw',
+            amount: data.amount,
+            userId: data.senderId
+        });
 
-        if (!user) {
-            throw new BadRequestException('Conta do usuário não encontrado');
-        }
+        return "Saque será realizado em breve!"
+    }
 
-        if (user.balance < data.amount) {
-            throw new BadRequestException('Saldo insuficiente');
-        }
+    async transfer(data: TransferDto) {
+        await transactionQueue.add('processTransaction', {
+            type: 'transfer',
+            amount: data.amount,
+            userId: data.senderId,
+            targetUserId: data.receiverId
+        });
 
-        const updatedUser = await this.prisma.users.update({
-            where: { id: data.senderId },
-            data: {
-                balance: user.balance - data.amount
+        return "Transferência será realizada em breve!"
+    }
+
+    async report(userId: number) {
+        const transactions = await this.prisma.transactions.findMany({
+            where: {
+                OR: [
+                    { senderUserId: userId }
+                ]
             }
         });
 
-        await this.prisma.transactions.create({
-            data: {
-                type: 'withdraw',
-                senderUserId: user.id,
-                amount: data.amount,
-              },
-        });
-
-        return "Saque realizado com sucesso"
+        return transactions;
     }
 }
