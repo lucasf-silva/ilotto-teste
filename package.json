@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "nest start --watch",
-    "start:workers": "node dist/jobs/transactions.worker.js",
+    "start:workers": "node dist/fila/transactions/transaction.worker.js",
     "start": "concurrently \"npm run start:dev\" \"npm run start:workers\"",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
