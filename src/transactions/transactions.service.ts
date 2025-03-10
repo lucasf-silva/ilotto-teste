@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { transactionQueue } from 'src/fila/transactions/transaction.queue';
 import { QueueEvents } from 'bullmq';
 import { TransferDto } from './dto/transfer.dto';
+import * as ExcelJS from 'exceljs';
 
 @Injectable()
 export class TransactionsService {
@@ -44,13 +45,43 @@ export class TransactionsService {
     }
 
     async report(userId: number) {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Planilha de transações');
+
+        worksheet.columns = [
+            { header: 'Tipo', key: 'type', width: 15 },
+            { header: 'ID do Sender', key: 'senderId', width: 15 },
+            { header: 'Nome do Sender', key: 'senderName', width: 30 },
+            { header: 'ID do Recipient', key: 'recipientId', width: 15 },
+            { header: 'Nome do Recipient', key: 'recipientName', width: 30 },
+            { header: 'Valor', key: 'amount', width: 15 },
+            { header: 'Status', key: 'status', width: 15 },
+        ];
+
         const transactions = await this.prisma.transactions.findMany({
             where: {
-                OR: [
-                    { senderUserId: userId }
-                ]
+                senderUserId: userId
             }
+            ,
+            include: {
+                senderUser: true,
+                recipientUser: true,
+            },
         });
+
+        transactions.forEach(transaction => {
+            worksheet.addRow({
+                type: transaction.type,
+                senderId: transaction.senderUser.id,
+                senderName: transaction.senderUser.name,
+                recipientId: transaction?.recipientUser?.id,
+                recipientName: transaction?.recipientUser?.name,
+                amount: transaction.amount,
+                status: transaction.status,
+            });
+        });
+
+        // return await workbook.xlsx.writeFile('transactions.xlsx');
 
         return transactions;
     }

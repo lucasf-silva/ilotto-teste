@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis_queue
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: queue_worker
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    command: ["node", "dist/fila/transactions/transaction.worker.js"]
+
+volumes:
+  redis_data:
+    driver: local

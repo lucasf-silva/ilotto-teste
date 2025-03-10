@@ -1,0 +1,15 @@
+# Usando a imagem oficial do Node.js
+FROM node:20
+
+# Definindo o diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copiando os arquivos necessários para o container
+COPY package.json package-lock.json ./
+RUN npm install
+
+# Copiando o restante do código do worker
+COPY . .
+
+# Comando para rodar o worker do BullMQ
+CMD ["node", "dist/jobs/transaction.worker.js"]

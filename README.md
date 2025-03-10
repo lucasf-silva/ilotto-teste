@@ -84,6 +84,7 @@ json
 ### 3.1. Usuários
 **GET** `/account`
 
+<!-- Esse endipoint é apenas para facilitar teste -->
 **GET** `/getall`
 
 
@@ -95,9 +96,9 @@ json
 
 ## 5. Docker
 Caso queira rodar a aplicação com Docker, use:
+1º
 bash
-docker-compose up --build
-
+docker-compose up -d
 
 Isso irá iniciar uma fila dentro do container.
 
