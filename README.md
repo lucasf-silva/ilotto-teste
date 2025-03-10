@@ -69,12 +69,23 @@ json
   "amount": 100.00
 }
 
+**POST** `/deposit`
+json
+{
+  "amount": 100.00
+}
 
-### 3.2. Buscar transferências
-**GET** `/transfers`
+**POST** `/withdraw`
+json
+{
+  "amount": 100.00
+}
 
-### 3.3. Buscar transferência por ID
-**GET** `/transfers/:id`
+### 3.1. Usuários
+**GET** `/account`
+
+**GET** `/getall`
+
 
 ## 4. Ferramentas e Tecnologias
 - **NestJS** (Framework Node.js para aplicações escaláveis)
