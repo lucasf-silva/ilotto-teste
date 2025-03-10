@@ -24,7 +24,6 @@ export class AuthTokenGuard implements CanActivate {
 
         try {
             const payload = await this.jwtService?.verifyAsync(token, this.jwtConfiguration);
-            console.log(payload);
 
             request[REQUEST_TOKEN_PAYLOAD_NAME] = payload;
         } catch (error) {

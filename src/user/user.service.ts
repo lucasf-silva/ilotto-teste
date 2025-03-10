@@ -1,4 +1,4 @@
-import { ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
@@ -183,5 +183,31 @@ export class UserService {
         token
       }
     };
+  }
+
+  async account(id: number) {
+    const user = await this.prisma.users.findFirst({ where: { id } });
+
+    if (!user) {
+      throw new BadRequestException('Usuário não encontrado');
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      balance: user.balance
+    }
+  }
+
+  async getAllUsers() {
+    return this.prisma.users.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        balance: true
+      }
+    });
   }
 }
